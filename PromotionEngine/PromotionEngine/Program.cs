@@ -39,8 +39,44 @@ namespace PromotionEngine
             int BPrice = products.First(x => x.SKU == 'B').Price;
             int CPrice = products.First(x => x.SKU == 'C').Price;
             int DPrice = products.First(x => x.SKU == 'D').Price;
+            //Promotions should be mutually exclusive - only one can be applied
+            if (ACount >= 3) //Apply first promotion 3A=130
+            {
+                //Apply Promotion
+                int firstPromotion = 130; //3A
+                int promoNotApplicableCount = ACount % 3;
+                int promoApplicableCount = ACount - promoNotApplicableCount;
 
-            total = ACount * APrice + BCount * BPrice + CCount * CPrice + DCount * DPrice;
+                int totalAPrice = (promoApplicableCount / 3) * firstPromotion + promoNotApplicableCount * APrice;
+                total = totalAPrice + BCount * BPrice + CCount * CPrice + DCount * DPrice;
+
+            }
+            else if (CCount > 0 && DCount > 0) //Apply second promotion C+D=30
+            {
+                //Apply Promotion
+                int secondPromotion = 30; //  C+D
+                int promoNotApplicableCount = (CCount > DCount) ? CCount - DCount : DCount - CCount;
+                var CDTotalPrice = secondPromotion * ((CCount > DCount) ? DCount : CCount);
+                var extraCDSKUPrice = (CCount > DCount) ? promoNotApplicableCount * CPrice : promoNotApplicableCount * DPrice;
+                total = CDTotalPrice + extraCDSKUPrice + BCount * BPrice + ACount * APrice;
+
+            }
+            else if (BCount >= 2) //Apply third promotion 2B=45
+            {
+                //Apply Promotion
+                int thirdPromotion = 45; // 2B
+                int promoNotApplicableCount = BCount % 2;
+                int promoApplicableCount = BCount - promoNotApplicableCount;
+
+                int totalBPrice = (promoApplicableCount / 2) * thirdPromotion + promoNotApplicableCount * BPrice;
+                total = totalBPrice + ACount * APrice + CCount * CPrice + DCount * DPrice;
+
+            }
+            //No Promotion Applied
+            else
+
+
+                total = ACount * APrice + BCount * BPrice + CCount * CPrice + DCount * DPrice;
 
             return total;
         }
